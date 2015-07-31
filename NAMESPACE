@@ -4,7 +4,8 @@ export(
   "XBSeq",
   "getSignalVars",
   "MAplot",
-  "plotSCVEsts"
+  "plotSCVEsts",
+  "XBplot"
   )
 
 
@@ -32,11 +33,10 @@ import(
   "ggplot2",
   "methods", 
   "BiocGenerics", 
-  "Biobase"
+  "Biobase",
+  "dplyr"
 )
 
 
 importFrom("pracma", "repmat")
 importFrom("matrixStats", "rowVars")
-
-

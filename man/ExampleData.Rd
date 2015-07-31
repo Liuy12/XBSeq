@@ -6,15 +6,15 @@
    Example Datasets used in the manual pages as well as in vignette
 }
 \description{
-   Example datasets used in manual pages and vignette by carrying out HTSeq procedure for exonic mapped reads (Observed) and non-exonic mapped reads (Background).
+   Example datasets used in manual pages and vignette by carrying out HTSeq procedure for exonic mapped reads (Observed) and non-exonic mapped reads (Background) and gene length information (genelength).
 }
 \usage{
    data(ExampleData)
 }
 \format{
-   ExampleData contains two data.frames. One is called 'Observed'. The other one is called 'Background'. For the two data.frames, rows represent exonic 
+   ExampleData contains three data.frames. Two of them are expression matrix. One is called 'Observed'. One is called 'Background'. For the two data.frames, rows represent exonic 
    or non-exonic region mapped reads for each gene. Columns represent each sample. Both the two data.frames have total of 22609 number of rows and 6 number
-   of columns.    
+   of columns. There is also another data.frame containing the gene length information. 
 }
 \details{
    In order to use XBSeq for testing DE, we need to run HTSeq twice to measure the reads mapped to exonic regions (observed signal) and 
@@ -50,12 +50,14 @@
    The scripts are also deposited in github (https://github.com/Liuy12/XBSeq).  
 }
 \value{
-   Two data.frames as described in format section. 
+   Three data.frames as described in format section. 
 }
 \author{
    Yuanhang Liu
 }
 \references{
-   Hung-I Harry Chen, Yuanhang Liu, Yi Zou, Zhao Lai, Devanand Sarkar, Yufei Huang, Yidong Chen
-   doi: \url{http://dx.doi.org/10.1101/016196}
+   H. I. Chen, Y. Liu, Y. Zou, Z. Lai, D. Sarkar, Y. Huang, et al.,
+   "Differential expression analysis of RNA sequencing data by
+   incorporating non-exonic mapped reads," BMC Genomics, vol. 16
+   Suppl 7, p. S14, Jun 11 2015.
 }

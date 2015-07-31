@@ -52,8 +52,10 @@ MAplot(stats, ylim, padj = TRUE, pcuff = 0.1, lfccuff = 1,
    Yuanhang Liu
 }
 \references{
-   Hung-I Harry Chen, Yuanhang Liu, Yi Zou, Zhao Lai, Devanand Sarkar, Yufei Huang, Yidong Chen
-   doi: \url{http://dx.doi.org/10.1101/016196}
+   H. I. Chen, Y. Liu, Y. Zou, Z. Lai, D. Sarkar, Y. Huang, et al.,
+   "Differential expression analysis of RNA sequencing data by
+   incorporating non-exonic mapped reads," BMC Genomics, vol. 16
+   Suppl 7, p. S14, Jun 11 2015.
 }
 \seealso{\code{\link{XBSeqTest}}}
 \examples{

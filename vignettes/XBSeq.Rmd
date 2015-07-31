@@ -1,8 +1,13 @@
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
 ---
 title: "Differential expression analysis of count data using XBSeq package"
 author: "Yuanhang Liu"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: BiocStyle::html_document:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Differential expression analysis of count data using XBSeq package}
   %\VignetteEngine{knitr::rmarkdown}
@@ -44,7 +49,7 @@ htseq-count [options] <alignment_file> <gtf_file_bg> > background_count.txt
 Details regarding how HTSeq works can be found here:
 http://www-huber.embl.de/HTSeq/doc/count.html
 
-The gtf file used to measure observed signal can be downloaded from UCSC database: http://genome.ucsc.edu. The gtf file used to measure background noise can be downloaded in the gtf folder from github: https://github.com/Liuy12/XBSeq. If you would like to construct the gtf file by yourself, we also have deposited the perl script we used to construct the gtf file in github. Details regarding the procedure we used to construct the background gtf file can be found in the Details section in the vignette.
+The gtf file used to measure observed signal can be downloaded from UCSC database: http://genome.ucsc.edu. The gtf file used to measure background noise can be downloaded in the gtf folder from github: https://github.com/Liuy12/XBSeq_files. If you would like to construct the gtf file by yourself, we also have deposited the perl script we used to construct the gtf file in github. Details regarding the procedure we used to construct the background gtf file can be found in the Details section in the vignette.
 
 ### XBSeq testing for DE 
 
@@ -70,6 +75,12 @@ Firstly, we need to construct a XBSeqDataSet object. Conditions are the design m
 ```{r,tidy=TRUE}
 conditions <- factor(c(rep('C',3), rep('T', 3)))
 XB <- XBSeqDataSet(Observed, Background, conditions)
+```
+
+It is always recommended that you examine the distribution of observed signal and background noise beforehand. We provide function 'r XBplot' to achieve this. We recommended to examine the distribution in log2 reads per kilobase per million (RPKM) unit by setting argument unit equals to "RPKM". Genelength information is loaded via "ExampleData". Ideally, library size should also be provided. By default, the sum of all the reads that mapped to exonic regions are used.
+
+```{r,tidy=TRUE}
+XBplot(XB, Samplenum = 1, unit = "LogRPKM", Genelength = genelength[,2])
 ```
 
 Then estimate the preliminary underlying signal followed by normalizing factor and dispersion estimates 

@@ -1,8 +1,8 @@
 Package: XBSeq
 Type: Package
 Title: Test for differential expression for RNA-seq data
-Version: 0.99.6
-Date: 2015-02-13
+Version: 0.99.7
+Date: 2015-07-27
 Author: Yuanhang Liu
 Maintainer: Yuanhang Liu <liuy12@uthscsa.edu>
 Description: We developed a novel algorithm, XBSeq, where a statistical
@@ -16,9 +16,9 @@ Description: We developed a novel algorithm, XBSeq, where a statistical
         accurate detection of differential expressed genes.
 License: GPL (>=3)
 Imports: pracma, matrixStats, locfit, ggplot2, methods, BiocGenerics,
-        Biobase
+        Biobase, dplyr
 Depends: DESeq2
-Suggests: knitr, DESeq
+Suggests: knitr, DESeq, rmarkdown, BiocStyle
 VignetteBuilder: knitr
 biocViews: RNASeq, DifferentialExpression, Sequencing, Software,
         ExperimentalDesign

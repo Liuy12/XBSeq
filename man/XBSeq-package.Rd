@@ -16,10 +16,10 @@
 \tabular{ll}{
 Package: \tab XBSeq\cr
 Type: \tab Package\cr
-Version: \tab 0.99.6\cr
-Date: \tab 2015-02-13\cr
+Version: \tab 0.99.7\cr
+Date: \tab 2015-07-27\cr
 License: \tab >=GPL3\cr
-Imports: \tab DESeq2, Biobase, pracma, matrixStats, ggplot2,locfit, methods, BiocGenerics\cr
+Imports: \tab DESeq2, Biobase, pracma, matrixStats, ggplot2,locfit, methods, BiocGenerics, dplyr\cr
 }
 }
 \author{
@@ -28,6 +28,8 @@ Imports: \tab DESeq2, Biobase, pracma, matrixStats, ggplot2,locfit, methods, Bio
 Maintainer: Yuanhang Liu <liuy12@uthscsa.edu>
 }
 \references{
-   Hung-I Harry Chen, Yuanhang Liu, Yi Zou, Zhao Lai, Devanand Sarkar, Yufei Huang, Yidong Chen
-   doi: \url{http://dx.doi.org/10.1101/016196}
+   H. I. Chen, Y. Liu, Y. Zou, Z. Lai, D. Sarkar, Y. Huang, et al.,
+   "Differential expression analysis of RNA sequencing data by
+   incorporating non-exonic mapped reads," BMC Genomics, vol. 16
+   Suppl 7, p. S14, Jun 11 2015.
 }
