@@ -68,7 +68,7 @@ MAplot <- function(stats, ylim, padj=TRUE, pcuff=0.1, lfccuff=1, linecol='red3',
 plotSCVEsts = function( XB, name=NULL, ymin, linecol='red3',
                         xlab = "mean of normalized counts", ylab = "SCV")
 {
-  px = rowMeans( counts( XB, normalized=TRUE ) )
+  px = rowMeans(counts(XB, normalized=TRUE))
   sel = (px>0)
   px = px[sel]
   py = fitInfo(XB, name=name)$perGeneSCVEsts[sel]
