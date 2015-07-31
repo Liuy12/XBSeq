@@ -17,7 +17,7 @@ setMethod('counts', signature(object = 'XBSeqDataSet'),
             if (!normalized) {
               return(assay(object, slot))
             } 
-            else if (is.null(sizeFactors(object)) | any(is.na(sizeFactors(object)))) {
+            else if (is.null(sizeFactors(object)) || any(is.na(sizeFactors(object)))) {
                 stop("first calculate size factors, add normalizationFactors, or set normalized=FALSE")
               } else {
                 return(t(t(assay(object,slot)) / sizeFactors(object)))
@@ -68,7 +68,7 @@ setMethod("estimateSCV", signature(object="XBSeqDataSet"),
             } else if( method == "per-condition" ) {
               replicated <- names( which( tapply( conditions(object), conditions(object), length ) > 1 ) )
               if( length( replicated ) < 1 )
-                stop( "None of your conditions is replicated. Use method='blind' to estimate across conditions, if you have crossed factors." )
+                stop( "None of your conditions is replicated. Use method='blind' to estimate across conditions." )
               nonreplicated <- names( which( tapply( conditions(object), conditions(object), length ) == 1 ) )
               overall_basemeans <- rowMeans( counts( object, normalized=TRUE ) )
               for( cond in replicated ) {
@@ -90,7 +90,7 @@ setMethod("estimateSCV", signature(object="XBSeqDataSet"),
             } else if( method == "pooled" ) {
               conds <- conditions(object)
               if( !any( duplicated( conds ) ) )
-                stop( "None of your conditions is replicated. Use method='blind' to estimate across conditions, or 'pooled-CR', if you have crossed factors." )
+                stop( "None of your conditions is replicated. Use method='blind' to estimate across conditions." )
               data <- getCountParamsPooled( counts(object), sizeFactors(object), conds )
               baseMeans <- data$baseMean
               data_var <- getSignalVars(counts(object, 1), counts(object, 2))
@@ -128,7 +128,7 @@ setMethod("estimateSCV", signature(object="XBSeqDataSet"),
           })
 
 
-XBSeqTest <- function( XB, condA, condB, pvals_only=FALSE )
+XBSeqTest <- function(XB, condA, condB, pvals_only=FALSE, method = c('NP', 'MLE'))
 {
   stopifnot( is( XB, "XBSeqDataSet" ) )
   if( all( is.na( dispTable(XB) ) ) )
@@ -137,8 +137,8 @@ XBSeqTest <- function( XB, condA, condB, pvals_only=FALSE )
     if( fitInfo( XB, "blind" )$sharingMode != "fit-only" )
       warning( 'You have used \'method="blind"\' in estimateSCV without also setting \'sharingMode="fit-only"\'. This will not yield useful results.' )
   }
-  stopifnot( condA %in% levels(conditions(XB)) )
-  stopifnot( condB %in% levels(conditions(XB)) )
+  stopifnot(condA %in% levels(conditions(XB)))
+  stopifnot(condB %in% levels(conditions(XB)))
   colA <- conditions(XB)==condA
   colB <- conditions(XB)==condB
   
@@ -148,10 +148,13 @@ XBSeqTest <- function( XB, condA, condB, pvals_only=FALSE )
   pval <- XBSeqTestForMatrices(
     counts(XB)[,colA],
     counts(XB)[,colB],
+    counts(XB, slot=2)[,colA],
+    counts(XB, slot=2)[,colB],
     sizeFactors(XB)[colA],
     sizeFactors(XB)[colB],
     rawScvA,
-    rawScvB )
+    rawScvB, 
+    method = method)
   if( pvals_only )
     return(pval)
   else {
@@ -167,18 +170,19 @@ XBSeqTest <- function( XB, condA, condB, pvals_only=FALSE )
       log2FoldChange = log2( dataB$baseMean / dataA$baseMean ),
       pval = pval,
       padj = p.adjust( pval, method="BH" ),
-      stringsAsFactors = FALSE )) }
+      stringsAsFactors = FALSE )) 
+    }
 }
 
 
 # a wrapper function once and for all
-XBSeq <- function(counts, bgcounts, conditions, method='pooled', sharingMode='maximum', fitType='local', pvals_only=FALSE ){
+XBSeq <- function(counts, bgcounts, conditions, method='pooled', sharingMode='maximum', fitType='local', pvals_only=FALSE, paraMethod='NP'){
   if(!is.factor(conditions))
     conditions <- as.factor(conditions)
   XB <- XBSeqDataSet(counts, bgcounts, conditions)
   XB <- estimateRealCount(XB)
   XB <- estimateSizeFactors(XB)
   XB <- estimateSCV(XB, method=method, sharingMode=sharingMode, fitType=fitType)
-  Teststas <- XBSeqTest(XB, levels(conditions)[1L], levels(conditions)[2L], pvals_only=pvals_only)
+  Teststas <- XBSeqTest(XB, levels(conditions)[1L], levels(conditions)[2L], pvals_only=pvals_only, method = paraMethod)
   Teststas
 }

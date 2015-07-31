@@ -6,9 +6,8 @@
 \description{
    Function to viewlize the distribution of observed signal X and background noise B across all genes for one specified sample
 }
-Before even carry out differential expression analysis, it is always recommended that you examine the 
 \usage{
-XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogRPKM'), Libsize = NULL, Genelength = NULL, xlab = 'log2 RPKM', ylab = 'Frequencies', col = c('blue', 'red'), alpha =c(1, 0.6))
+XBplot(XB, Samplenum = NULL, unit = c('counts', 'LogRPKM'), Libsize = NULL, Genelength = NULL, xlab = 'log2 RPKM', ylab = 'Frequencies', col = c('blue', 'red'), alpha =c(1, 0.6))
 }
 \arguments{
   \item{XB}{
@@ -28,9 +27,6 @@ XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogRPKM'), Libsize 
 }
   \item{xlab}{
    lab for x axis
-}
-  \item{ylab}{
-   Lable for u axis
 }
   \item{ylab}{
    Lable for y axis

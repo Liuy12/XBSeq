@@ -2,6 +2,7 @@
 \alias{ExampleData}
 \alias{Observed}
 \alias{Background}
+\alias{genelength}
 \title{
    Example Datasets used in the manual pages as well as in vignette
 }

@@ -1,0 +1,6 @@
+data("ExampleData")
+conditions <- factor(c(rep('C1',2), rep('C2', 2)))
+XB <- XBSeqDataSet(Observed[,1:4], Background[,1:4], conditions)
+XB <- estimateRealCount(XB)
+XB <- estimateSizeFactors(XB)
+expect_warning(estimateSCV(XB, method='per-condition', sharingMode='gene-est-only', fitType='local'))
