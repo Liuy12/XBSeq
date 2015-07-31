@@ -1,19 +1,9 @@
----
-title: "Differential expression analysis of count data using XBSeq package"
-author: "Yuanhang Liu"
-date: "`r Sys.Date()`"
-vignette: >
-  %\VignetteIndexEntry{Differential expression analysis of count data using XBSeq package}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8} 
-output: 
-  BiocStyle::html_document:
-    toc: true
----
-
-```{r style, echo = FALSE, results = 'asis'}
-BiocStyle::markdown()
-```
+[![platform](http://www.bioconductor.org/shields/availability/devel/XBSeq.svg)](http://www.bioconductor.org/packages/devel/bioc/html/XBSeq.html#archives)
+[![Build Status](http://www.bioconductor.org/shields/build/devel/bioc/XBSeq.svg)](http://bioconductor.org/checkResults/devel/bioc-LATEST/XBSeq/)
+[![Bioc](http://www.bioconductor.org/shields/years-in-bioc/XBSeq.svg)](http://www.bioconductor.org/packages/devel/bioc/html/XBSeq.html#since)
+[![post](http://www.bioconductor.org/shields/posts/XBSeq.svg)](https://support.bioconductor.org/t/XBSeq/)
+[![commit](http://www.bioconductor.org/shields/commits/bioc/XBSeq.svg)](http://www.bioconductor.org/packages/devel/bioc/html/XBSeq.html#svn_source)
+[![download](http://www.bioconductor.org/shields/downloads/XBSeq.svg)](http://bioconductor.org/packages/stats/bioc/XBSeq.html)
 
 ## Introduction 
 
