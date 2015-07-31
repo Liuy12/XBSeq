@@ -33,6 +33,7 @@ setMethod("estimateSCV", signature(object="XBSeqDataSet"),
                     fitType = c("local", "parametric"),
                     locfit_extra_args=list(), lp_extra_args=list(), ... )
           {
+            t1 <- Sys.time()
             stopifnot( is( object, "XBSeqDataSet" ) )
             if(any(c(is.null(sizeFactors(object)))))
               stop( "NAs found in size factors. Have you called already 'estimateSizeFactors'?" )
@@ -122,9 +123,8 @@ setMethod("estimateSCV", signature(object="XBSeqDataSet"),
             if( "max" %in% object@dispTable )
               dispEst(object, "disp_max") <- do.call( pmax,
                                                 c( dispEst(object, which(colnames(dispEst(object)) %in% paste( "disp", object@dispTable, sep="_" )) ), na.rm=TRUE ) )
-            
             validObject( object )
-            object
+            return(object)
           })
 
 
@@ -152,14 +152,13 @@ XBSeqTest <- function( XB, condA, condB, pvals_only=FALSE )
     sizeFactors(XB)[colB],
     rawScvA,
     rawScvB )
-  
   if( pvals_only )
-    pval
+    return(pval)
   else {
     data <- getCountParams( counts(XB), sizeFactors(XB)[colA|colB] )
     dataA <- getCountParams( counts(XB)[,colA], sizeFactors(XB)[colA] )
     dataB <- getCountParams( counts(XB)[,colB], sizeFactors(XB)[colB] )
-    data.frame(
+    return(data.frame(
       id    = rownames( counts(XB) ),
       baseMean  = data$baseMean,
       baseMeanA = dataA$baseMean,
@@ -168,7 +167,7 @@ XBSeqTest <- function( XB, condA, condB, pvals_only=FALSE )
       log2FoldChange = log2( dataB$baseMean / dataA$baseMean ),
       pval = pval,
       padj = p.adjust( pval, method="BH" ),
-      stringsAsFactors = FALSE ) }
+      stringsAsFactors = FALSE )) }
 }
 
 
