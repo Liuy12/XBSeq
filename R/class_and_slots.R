@@ -12,7 +12,7 @@ setValidity( "XBSeqDataSet", function( object ) {
   if(!is.factor(object@conditions))
     return("conditions have to be factors")
   TRUE
-} )
+})
 
 
 setGeneric("fitInfo", function(object, name=NULL) standardGeneric("fitInfo"))
@@ -99,6 +99,10 @@ XBSeqDataSet <- function(counts, bgcounts, conditions, sizeFactors=NULL, ...)
   mode( counts ) <- "integer"
   mode( bgcounts ) <- "integer"
   if( nrow( counts )!= nrow( bgcounts ) ){
+    if(is.null(rownames(counts)) | is.null(rownames(bgcounts)))
+      stop("Please provide gene symbols or other unique ids as rownames")
+    else if(sum(is.na(as.numeric(rownames(counts)))) == 0 | sum(is.na(as.numeric(rownames(bgcounts)))) == 0)
+      stop('Please provide meaningful names as rownames rather than arabic numerals')
     MissedRecord <- which( rownames( counts) %in% setdiff( rownames( counts ),rownames( bgcounts ) ) )
     bgcounts <- insertRow( bgcounts, repmat(apply(bgcounts,2,mean),length(MissedRecord),1) ,MissedRecord)
   }

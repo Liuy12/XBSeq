@@ -8,7 +8,7 @@
 }
 \usage{
 XBSeq(counts, bgcounts, conditions, method = "pooled", 
-   sharingMode = "maximum", fitType = "local", pvals_only = FALSE)
+   sharingMode = "maximum", fitType = "local", pvals_only = FALSE, paraMethod='NP')
 }
 \arguments{
   \item{counts}{
@@ -32,6 +32,12 @@ XBSeq(counts, bgcounts, conditions, method = "pooled",
   \item{pvals_only}{
    Logical; Specify whether to extract pvalues only
 }
+  \item{paraMethod}{
+   Method to use for estimation of distribution parameters, 'NP' or 'MLE'. See details section for details 
+}
+}
+\details{
+   This is the express function for carry out differential expression analysis. Two methods can be choosen from for \code{paraMethod}. 'NP' stands for non-parametric method. 'MLE' stands for maximum liklihood estimation method. 'NP' is generally recommended for experiments with replicates smaller than 5.    
 }
 \value{
 A data.frame with following columns:

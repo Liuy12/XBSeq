@@ -23,3 +23,7 @@
 - XBplot: A function to take a look at the distribution of background noise of your experiment. You can get a rough idea of how your experiment is influenced by background noise (Reads mapped to the non-exonic regions)
 
 - XBSeq paper got published online on June 6. All the references has been updated. 
+
+- Adding MLE for estimation of parameters which depends on Delaporte package 
+
+- Adding unit testing

@@ -34,9 +34,12 @@ import(
   "methods", 
   "BiocGenerics", 
   "Biobase",
-  "dplyr"
+  "Delaporte",
+  "magrittr"
 )
 
-
+importFrom("dplyr", "select")
+importFrom("dplyr", "mutate")
+importFrom("dplyr", "bind_rows")
 importFrom("pracma", "repmat")
 importFrom("matrixStats", "rowVars")

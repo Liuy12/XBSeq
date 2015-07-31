@@ -119,45 +119,91 @@ predict_helper <- function( fit, x )
 }
 
 
-XBSeqTestForMatrices <- function( countsA, countsB, sizeFactorsA, sizeFactorsB,
-                                  SCVA, SCVB )
+XBSeqTestForMatrices <- function( countsA, countsB, bgcountsA, bgcountsB, sizeFactorsA, sizeFactorsB,
+                                  SCVA, SCVB , method = c('NP', 'MLE'))
 {
-  kAs <- apply( countsA,1,sum )
-  kBs <- apply( countsB ,1,sum)
-
-  mus <- rowMeans( cbind(
+  method <- match.arg(method, c('NP', 'MLE'))
+  if(ncol(countsA) < 5 & method == 'MLE')
+    warning('Non-parametric estimation method is recommended for experiments with replicates smaller than 5')
+  
+  kAs <- apply(countsA, 1, sum)
+  kBs <- apply(countsB, 1, sum)
+  
+  mus <- rowMeans(cbind(
     t( t( countsA ) / sizeFactorsA ),
-    t( t( countsB ) / sizeFactorsB ) ) )
-
-  signalmuA <- mus*sum(sizeFactorsA)
-  signalmuB <- mus*sum(sizeFactorsB)
-
-  signalVarsA <- pmax( mus * sum( sizeFactorsA ) + SCVA * mus^2 * sum(sizeFactorsA^2),
-                     mus * sum( sizeFactorsA ) * (1+1e-8) )
-  signalVarsB <- pmax( mus * sum( sizeFactorsB ) + SCVB * mus^2 * sum(sizeFactorsB^2),
-                     mus * sum( sizeFactorsB ) * (1+1e-8) )
-
+    t( t( countsB ) / sizeFactorsB)))
+  
+  if(method == 'NP'){
+    signalmuA <- mus*sum(sizeFactorsA)
+    signalmuB <- mus*sum(sizeFactorsB)
+    
+    signalVarsA <- pmax( mus * sum( sizeFactorsA ) + SCVA * mus^2 * sum(sizeFactorsA^2),
+                         mus * sum( sizeFactorsA ) * (1+1e-8) )
+    signalVarsB <- pmax( mus * sum( sizeFactorsB ) + SCVB * mus^2 * sum(sizeFactorsB^2),
+                         mus * sum( sizeFactorsB ) * (1+1e-8) )
+    
+    sizeA <- signalmuA^2/(signalVarsA-signalmuA)
+    sizeB <- signalmuB^2/(signalVarsB-signalmuB)
+  }
+  else{
+    musA <- mus*mean(sizeFactorsA)
+    musB <- mus*mean(sizeFactorsB)
+    
+    VarsA <- pmax(mus * mean(sizeFactorsA) + SCVA * mus^2 * mean(sizeFactorsA^2),
+                  mus * mean(sizeFactorsA) * (1+1e-8))
+    VarsB <- pmax(mus * mean(sizeFactorsB) + SCVB * mus^2 * mean(sizeFactorsB^2),
+                  mus * mean(sizeFactorsB) * (1+1e-8))
+    
+    lambda <- rowMeans(cbind(
+      t(t(bgcountsA) / sizeFactorsA),
+      t(t(bgcountsB) / sizeFactorsB)))
+    
+    lambdaA <- lambda*mean(sizeFactorsA)
+    lambdaB <- lambda*mean(sizeFactorsB)
+    
+    
+    ParamsA <- sapply(1:nrow(countsA), function(i) estimation_param_PoissonNB_MLE(countsA[i,] + bgcounts[i,],
+                                                                                  bgcountsA[i,],
+                                                                                  musA[i]^2/(VarsA[i]-musA[i]),
+                                                                                  (VarsA[i]-musA[i])/musA[i],
+                                                                                  lambdaA[i]
+    ))
+    ParamsA <- matrix(unlist(ParamsA), ncol=3, byrow = TRUE)
+    ParamsB <- sapply(1:nrow(countsB), function(i) estimation_param_PoissonNB_MLE(countsB[i,] + bgcounts[i,],
+                                                                                  bgcountsB[i,],
+                                                                                  musB[i]^2/(VarsB[i]-musB[i]),
+                                                                                  (VarsB[i]-musB[i])/musB[i],
+                                                                                  lambdaB[i]
+    ))
+    ParamsB <- matrix(unlist(ParamsB), ncol=3, byrow = TRUE)
+    
+    sizeA <- ParamsA[,1] * sum(sizeFactorsA)
+    sizeB <- ParamsB[,1] * sum(sizeFactorsB)
+    
+    signalmuA <- ParamsA[,1] * ParamsB[,2] * sum(sizeFactorsA)
+    signalmuB <- ParamsB[,1] * ParamsB[,2] * sum(sizeFactorsB)
+  }
+  
   sapply( seq(along=kAs), function(i) {
-
-    if( kAs[i] == 0 & kBs[i] == 0 )
+    
+    if(kAs[i] == 0 & kBs[i] == 0)
       return( NA )
-
+    
     # probability of all possible counts sums with the same total count:
-    ks <- 0 : ( kAs[i] + kBs[i] )
-    ps <- dnbinom(                   ks, mu = signalmuA[i], size = signalmuA[i]^2/(signalVarsA[i]-signalmuA[i]) ) *
-      dnbinom( kAs[i] + kBs[i] - ks, mu = signalmuB[i], size = signalmuB[i]^2/(signalVarsB[i]-signalmuB[i]) )
-
+    ks <- 0 : (kAs[i] + kBs[i])
+    ps <- dnbinom(ks, mu = signalmuA[i], size = sizeA[i]) *
+      dnbinom( kAs[i] + kBs[i] - ks, mu = signalmuB[i], size = sizeB[i])
+    
     # probability of observed count sums:
-    pobs <- dnbinom( kAs[i], mu = signalmuA[i], size = signalmuA[i]^2/(signalVarsA[i]-signalmuA[i]) ) *
-      dnbinom( kBs[i], mu = signalmuB[i], size = signalmuB[i]^2/(signalVarsB[i]-signalmuB[i]) )
-
-    #stopifnot( na.omit(pobs == ps[ kAs[i]+1 ]) )
+    pobs <- dnbinom( kAs[i], mu = signalmuA[i], size = sizeA[i]) *
+      dnbinom( kBs[i], mu = signalmuB[i], size = sizeB[i])
+    
     if( kAs[i] * sum( sizeFactorsB ) < kBs[i] * sum( sizeFactorsA ) )
       numer <- ps[ 1 : (kAs[i]+1) ]
     else
       numer <- ps[ (kAs[i]+1) : length(ps) ]
     min( 1, 2 * sum(numer) / sum(ps) )
-  } )
+  })
 }
 
 
@@ -201,7 +247,7 @@ getSignalVars<-function( counts, bgcounts){
     tho <- c(tho, temp)
   }
   fullvar <- observe_param$baseVar
-   signalvar <- fullvar + lambda - 2*tho*sqrt(fullvar)*sqrt(lambda)
+  signalvar <- fullvar + lambda - 2*tho*sqrt(fullvar)*sqrt(lambda)
   as.matrix(signalvar)
 }
 
@@ -226,4 +272,34 @@ adjustScv <- function( scv, nsamples ) {
     ifelse( scv > .02,
             pmax( predict_helper( scvBiasCorrectionFits[[ nsamples-1 ]], scv ), 1e-8 * scv ),
             scv )   # For scv < .02, our fit is too coarse, but no correction seems necessary anyway
+}
+
+
+Loglikhood <- function(counts, bgcounts){
+  function(para) {
+    alpha <- para[1]
+    beta <- para[2]
+    lambda <- para[3] 
+    -sum(ddelap(counts, alpha = alpha, beta = beta, lambda = lambda, log = TRUE), dpois(bgcounts, lambda = lambda, log = TRUE))
+  }
+}
+
+
+estimation_param_PoissonNB_MLE <- function(counts, bgcounts, alpha, beta, lambda){
+  if(any(is.na(c(alpha, beta, lambda))))
+    list(alpha = alpha, beta = beta, lambda = lambda)
+  else{
+    mle <- try(optim(c(alpha, beta, lambda), Loglikhood(counts, bgcounts),
+                     method = 'L-BFGS-B', lower=c(0,0,0)), silent = TRUE)
+    if(class(mle) == 'try-error')
+      list(alpha = alpha, beta = beta, lambda = lambda)
+    else{
+      mle <- optim(c(alpha, beta, lambda), Loglikhood(counts, bgcounts),
+                   method = 'L-BFGS-B', lower=c(0,0,0))
+      if (mle$convergence>0 | any(is.na(mle$par)))
+        list(alpha = alpha, beta = beta, lambda = lambda)
+      else
+        list(alpha = mle$par[1], beta = mle$par[2], lambda = mle$par[3])
+    }
+  }
 }

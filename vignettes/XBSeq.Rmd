@@ -95,7 +95,7 @@ plotSCVEsts(XB)
 Carry out the DE test by using function XBSeqTest
 
 ```{r}
-Teststas <- XBSeqTest( XB, levels(conditions)[1L], levels(conditions)[2L] )
+Teststas <- XBSeqTest( XB, levels(conditions)[1L], levels(conditions)[2L], method ='NP')
 ```
 
 Plot Maplot based on test statistics
@@ -107,7 +107,7 @@ MAplot(Teststas, padj = FALSE, pcuff = 0.01, lfccuff = 1)
 ```{r,eval=FALSE,tidy=TRUE}
 # Alternatively, all the codes above can be done with a wrapper function XBSeq
 Teststats <- XBSeq( Observed, Background, conditions, method='pooled', sharingMode='maximum',
-  fitType='local', pvals_only=FALSE )
+  fitType='local', pvals_only=FALSE, paraMethod = 'NP' )
 ```
 
 #### Compare the results with DESeq

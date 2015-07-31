@@ -1,0 +1,8 @@
+data("ExampleData")
+conditions <- factor(c(rep('C1',3), rep('C2', 3)))
+XB <- XBSeqDataSet(Observed, Background, conditions)
+XB <- estimateRealCount(XB)
+XB <- estimateSizeFactors(XB)
+expect_error(XBSeqTest(XB, levels(conditions)[1L], levels(conditions)[2L] , method = 'NP'))
+XB <- estimateSCV(XB)
+expect_warning(XBSeqTest(XB, levels(conditions)[1L], levels(conditions)[2L], method = 'MLE'))

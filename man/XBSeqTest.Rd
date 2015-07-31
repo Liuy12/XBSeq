@@ -7,7 +7,7 @@
    The same method is adopted from DESeq for testing differential expression 
 }
 \usage{
-XBSeqTest(XB, condA, condB, pvals_only = FALSE)
+XBSeqTest(XB, condA, condB, pvals_only = FALSE, method = c("NP", "MLE"))
 }
 \arguments{
   \item{XB}{
@@ -22,6 +22,12 @@ XBSeqTest(XB, condA, condB, pvals_only = FALSE)
   \item{pvals_only}{
    Logical;whether or not only extract p values
 }
+  \item{method}{
+   method to use for estimation of distribution parameters, 'NP' or 'MLE'. See details section for details
+}
+}
+\details{
+   Differential expression analysis based on statistical methods proposed for DESeq. Details about the method can be found in DESeq manual page. Two methods can be choosen from for \code{method}. 'NP' stands for non-parametric method. 'MLE' stands for maximum liklihood estimation method. 'NP' is generally recommended for experiments with replicates smaller than 5.    
 }
 \value{
 A data.frame with following columns:
@@ -50,10 +56,6 @@ A data.frame with following columns:
    The adjusted p value for all genes
 }
 }
-\details{
-   Differential expression analysis based on statistical methods proposed for DESeq. Details about the method can be found in DESeq manual page. 
-}
-   
 \references{
    H. I. Chen, Y. Liu, Y. Zou, Z. Lai, D. Sarkar, Y. Huang, et al.,
    "Differential expression analysis of RNA sequencing data by
