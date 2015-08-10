@@ -1,11 +1,11 @@
-XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogRPKM'), Libsize = NULL, Genelength = NULL, xlab = 'log2 RPKM', ylab = 'Frequencies', col = c('blue', 'red'), alpha =c(1, 0.6)){
+XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize = NULL, Genelength = NULL, xlab = 'log2 TPM', ylab = 'Frequencies', col = c('blue', 'red'), alpha =c(1, 0.6)){
   if(is.null(Samplenum))
     stop("You need to provide the column number of the sample you want to examine")
   Observed <- as.data.frame(counts(XB, slot = 1)) %>% select(Samplenum) %>% mutate(Group = 'Observed')
   Background <- as.data.frame(counts(XB, slot = 2)) %>% select(Samplenum) %>% mutate(Group = 'Background')
   colnames(Observed) <- c('Sample', 'Group')
   colnames(Background) <- c('Sample', 'Group')
-  unit <- match.arg(unit, c('counts', 'LogRPKM'))
+  unit <- match.arg(unit, c('counts', 'LogTPM'))
   if(unit == 'counts'){
     xlab <- 'Counts'
     xlim <- c(0, median(Observed$Sample))
@@ -13,14 +13,14 @@ XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogRPKM'), Libsize 
     Combined <- bind_rows(Observed, Background)
     }
   else{
-    xlab <- 'Log2 RPKM'
+    xlab <- 'Log2 TPM'
     if(is.null(Libsize)){
       warning("Libsize is not provided, the sum of all the read counts that mapped to exonic
 regions in each sample is used as the total library size for that sample")
       Libsize <- sum(Observed$Sample)
     }
     if(is.null(Genelength))
-      stop("Please provide the gene length information if you choose 'unit' equals to 'LogRPKM'")
+      stop("Please provide the gene length information if you choose 'unit' equals to 'LogTPM'")
     if(!is.numeric(Genelength))
       stop("Please make sure that 'genelength' is a numeric vector of the same order and length of your XB object")
     if(nrow(Observed) != length(Genelength))
@@ -28,6 +28,8 @@ regions in each sample is used as the total library size for that sample")
     Genelength <- as.numeric(Genelength)
     Observed$Sample <- Observed$Sample*10^9/(Genelength*Libsize)
     Background$Sample <- Background$Sample*10^9/(Genelength*Libsize)
+    Observed$Sample <- Observed$Sample*10^6/sum(Observed$Sample, Background$Sample)
+    Background$Sample <- Background$Sample*10^6/sum(Observed$Sample, Background$Sample)
     Combined <- bind_rows(Observed, Background)
     Combined$Sample <- log2(Combined$Sample)
     xlim <- range(Combined$Sample[!is.infinite(Combined$Sample)])

@@ -72,18 +72,10 @@ conditions <- factor(c(rep('C',3), rep('T', 3)))
 XB <- XBSeqDataSet(Observed, Background, conditions)
 ```
 
-It is always recommended that you examine the distribution of observed signal and background noise beforehand. We provide function 'r XBplot' to achieve this. We recommended to examine the distribution in log2 reads per kilobase per million (RPKM) unit by setting argument unit equals to "RPKM". Genelength information is loaded via "ExampleData". Ideally, library size should also be provided. By default, the sum of all the reads that mapped to exonic regions are used.
+It is always recommended that you examine the distribution of observed signal and background noise beforehand. We provide function 'r XBplot' to achieve this. We recommended to examine the distribution in log2 transcript per million (TPM) unit by setting argument unit equals to "logTPM". Genelength information is loaded via "ExampleData". Ideally, library size should also be provided. By default, the sum of all the reads that mapped to exonic regions are used.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 ```{r,tidy=TRUE,fig.width=5,fig.height=4}
-=======
-```{r,tidy=TRUE,fig.width=6,fig.height=3}
->>>>>>> master
-=======
-```{r,tidy=TRUE,fig.width=6,fig.height=3}
->>>>>>> master
-XBplot(XB, Samplenum = 1, unit = "LogRPKM", Genelength = genelength[,2])
+XBplot(XB, Samplenum = 1, unit = "LogTPM", Genelength = genelength[,2])
 ```
 
 Then estimate the preliminary underlying signal followed by normalizing factor and dispersion estimates 
@@ -96,15 +88,7 @@ XB <- estimateSCV( XB, method='pooled', sharingMode='maximum', fitType='local' )
 
 Take a look at the scv fitting information 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 ```{r,fig.width=3,fig.height=3}
-=======
-```{r,fig.width=4,fig.height=3}
->>>>>>> master
-=======
-```{r,fig.width=4,fig.height=3}
->>>>>>> master
 plotSCVEsts(XB)
 ```
 
