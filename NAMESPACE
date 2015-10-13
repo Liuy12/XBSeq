@@ -1,0 +1,45 @@
+export(
+  "XBSeqDataSet",
+  "XBSeqTest",
+  "XBSeq",
+  "getSignalVars",
+  "MAplot",
+  "plotSCVEsts",
+  "XBplot"
+  )
+
+
+exportMethods(
+  "conditions",
+  "conditions<-",
+  "dispEst",
+  "dispEst<-",
+  "dispTable",
+  "estimateSCV",
+  "fitInfo",
+  "counts",
+  "estimateRealCount"
+)
+
+
+exportClasses(
+  "XBSeqDataSet" 
+)
+
+
+import(
+  "DESeq2",
+  "locfit",
+  "ggplot2",
+  "methods", 
+  "BiocGenerics", 
+  "Biobase",
+  "Delaporte",
+  "magrittr"
+)
+
+importFrom("dplyr", "select")
+importFrom("dplyr", "mutate")
+importFrom("dplyr", "bind_rows")
+importFrom("pracma", "repmat")
+importFrom("matrixStats", "rowVars")
