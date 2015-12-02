@@ -35,7 +35,9 @@ import(
   "BiocGenerics", 
   "Biobase",
   "Delaporte",
-  "magrittr"
+  "magrittr",
+  'plotly',
+  'MetricsGraphics'
 )
 
 importFrom("dplyr", "select")
