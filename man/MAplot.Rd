@@ -9,7 +9,7 @@
 \usage{
 MAplot(stats, ylim, padj = TRUE, pcuff = 0.1, lfccuff = 1, 
    linecol = "red3", xlab = "mean of normalized counts",
-   ylab = expression(log[2] ~ fold ~ change), shape) 
+   ylab = expression(log[2] ~ fold ~ change), shape, interactive = F) 
 }
 \arguments{
   \item{stats}{
@@ -39,6 +39,9 @@ MAplot(stats, ylim, padj = TRUE, pcuff = 0.1, lfccuff = 1,
   \item{shape}{
    The shape of the points used
 }  
+  \item{interactive}{
+  A logical value indicating whether a dynamic version of the same figure should be generated
+  }  
 }
 \details{
    Generate classic MAplot for DE analysis using ggplot2, where A and M are from slot \code{baseMean} and slot \code{log2FoldChange} of 

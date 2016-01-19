@@ -7,7 +7,7 @@
    Function to viewlize the distribution of observed signal X and background noise B across all genes for one specified sample
 }
 \usage{
-XBplot(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize = NULL, Genelength = NULL, xlab = 'log2 TPM', ylab = 'Frequencies', col = c('blue', 'red'), alpha =c(1, 0.6))
+XBplot(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize = NULL, Genelength = NULL, xlab = 'log2 TPM', ylab = 'Frequencies', col = c('blue', 'red'), alpha =c(1, 0.6), interactive = F)
 }
 \arguments{
   \item{XB}{
@@ -37,6 +37,9 @@ XBplot(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize = NULL, Genel
   \item{alpha}{
    A vector of two numeric numbers indicating transparency
 }
+  \item{interactive}{
+  A logical value indicating whether a interactive version of the same figure should be generated
+  }
 }
 \details{
    We strongly recommended users to apply XBplot to their datasets before differential expression analysis. According to our experience, for XBplot in 'logTPM' unit, the peak of distribution of background noise generally coinsides with the left hump of distribution of observed signal. 
