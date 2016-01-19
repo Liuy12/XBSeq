@@ -71,7 +71,7 @@ MAplot <- function(stats, ylim, padj=TRUE, pcuff=0.1, lfccuff=1, linecol='red3',
   if (missing(shape))
     shape = ifelse(y<ylim[1], 6, ifelse(y>ylim[2], 2, 16) )
   stats$log2FoldChange = pmax( ylim[1], pmin(ylim[2], y) )
-  ggplot() + geom_point( data=stats,aes( x=baseMean, y=log2FoldChange ), color=col, shape=shape ) +
+  gp <- ggplot() + geom_point( data=stats,aes( x=baseMean, y=log2FoldChange ), color=col, shape=shape ) +
     ylim(ylim) + geom_hline(yintercept=0,colour=linecol,size=1)  + scale_x_log10() +
     labs( x=xlab, y=ylab )
   if(interactive){
@@ -89,6 +89,9 @@ MAplot <- function(stats, ylim, padj=TRUE, pcuff=0.1, lfccuff=1, linecol='red3',
                         .text('Gene Name: ' +  d.point.id + ',' + ' Log2 intensity: ' + d.point.baseMean + ',' + ' Log2 fold change: ' + d.point.log2FoldChange);
   }")
   }
+  else
+    mp <- c()
+  return(list(gp, mp))
 }
 
 
