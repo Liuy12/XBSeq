@@ -35,7 +35,7 @@ regions in each sample is used as the total library size for that sample")
     xlim <- range(Combined$Sample[!is.infinite(Combined$Sample)])
     binwidth <- 0.1
   }
-  ggplot(data = Combined) + 
+  gp <- ggplot(data = Combined) + 
     geom_histogram(aes(x = Sample, fill=Group, y=..count.., alpha=Group), 
                    binwidth=binwidth, position='identity') +
     scale_fill_manual(values = col) + scale_alpha_manual(values = alpha, guide = FALSE) +
@@ -44,10 +44,13 @@ regions in each sample is used as the total library size for that sample")
   if(interactive){
     Background <- Combined[Combined$group == 'Background',1]
     Promoter <- Combined[Combined$group == 'Observed', 1]
-    plot_ly(x = Background, opacity = 0.6, type = "histogram", histnorm = 'probability density', xbins = list(size = binwidth), autobinx = F, name = 'Background') %>%
+    dp <- plot_ly(x = Background, opacity = 0.6, type = "histogram", histnorm = 'probability density', xbins = list(size = binwidth), autobinx = F, name = 'Background') %>%
       add_trace(x = Promoter, filename="overlaid-histogram", name = 'Promoter') %>%
       layout(barmode="overlay")
   }
+  else 
+    dp <- c()
+  return(list(gp, dp))
 }
 
 
