@@ -36,4 +36,19 @@
 
 - Change XBplot unit to logTPM rather logRPKM. 
 
+######################################################################
+################### 1.0.0
+
+- First version was released in Bioconductor 3.2
+
+######################################################################
+################### 1.1.0
+
+- Add dynamic visulization to XBplot and MAplot
+- Comment regarding intron retention
+
+
+
+
+
 
