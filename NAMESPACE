@@ -37,7 +37,7 @@ import(
   "Delaporte",
   "magrittr",
   'plotly',
-  'MetricsGraphics'
+  'metricsgraphics'
 )
 
 importFrom("dplyr", "select")

@@ -5,11 +5,11 @@
 [![commit](http://www.bioconductor.org/shields/commits/bioc/XBSeq.svg)](http://www.bioconductor.org/packages/devel/bioc/html/XBSeq.html#svn_source)
 [![download](http://www.bioconductor.org/shields/downloads/XBSeq.svg)](http://bioconductor.org/packages/stats/bioc/XBSeq.html)
 
-## Introduction 
+# Introduction 
 
-XBSeq is a novel algorithm for testing RNA-seq differential expression (DE), where a statistical model was established based on the assumption that observed signals are the convolution of true expression signals and sequencing noises. The mapped reads in non-exonic regions are considered as sequencing noises, which follows a Poisson distribution. Given measurable observed signal and background noise from RNA-seq data, true expression signals, assuming governed by the negative binomial distribution, can be delineated and thus the accurate detection of differential expressed genes
+XBSeq is a novel algorithm for testing RNA-seq differential expression (DE), where a statistical model was established based on the assumption that observed signals are the convolution of true expression signals and sequencing noises. The mapped reads in non-exonic regions are considered as sequencing noises, which follows a Poisson distribution. Given measurable observed signal and background noise from RNA-seq data, true expression signals, assuming governed by the negative binomial distribution, can be delineated and thus the accurate detection of differential expressed genes. XBSeq paper is published in BMC genomics [1].
 
-## Installation 
+# Installation 
 
 XBSeq can be installed from Bioconductor by 
 ```{r,eval=FALSE}
@@ -21,9 +21,9 @@ library("XBSeq")
 ```
 If you would like to install the development version of XBSeq, it is recommended that you refer to the github page of XBSeq. 
 
-## Use XBSeq for testing differential expression 
+# Use XBSeq for testing differential expression 
 
-#### HTSeq procedure
+## HTSeq procedure
 
 In order to use XBSeq for testing DE, after sequence alignment, we need to run HTSeq twice to measure the reads mapped to exonic regions (observed signal) and non-exonic regions (background noise). Generally speaking, you will need to run the following code to generate observed signal and background noise. 
 
@@ -36,7 +36,7 @@ Details regarding how HTSeq works can be found here: http://www-huber.embl.de/HT
 
 The gtf file used to measure observed signal can be downloaded from UCSC database: http://genome.ucsc.edu. The gtf file used to measure background noise can be downloaded in the gtf folder from github: https://github.com/Liuy12/XBSeq_files. If you would like to construct the gtf file by yourself, we also have deposited the perl script we used to construct the gtf file in github. Details regarding the procedure we used to construct the background gtf file can be found in the Details section in the vignette.
 
-#### XBSeq testing for DE 
+## XBSeq testing for DE 
 
 After HTSeq procedure, then we will have two measurements for each gene, the observed signal and background noise. Here we will use a mouse RNA-seq dataset, which contains 3 replicates of wild type mouse liver tissues (WT) and 3 replicates of Myc transgenic mouse liver tissues (MYC). The dataset is obtained from Gene Expression Omnibus [(GSE61875)](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE61875). 
 
@@ -62,10 +62,10 @@ conditions <- factor(c(rep('C',3), rep('T', 3)))
 XB <- XBSeqDataSet(Observed, Background, conditions)
 ```
 
-It is always recommended that you examine the distribution of observed signal and background noise beforehand. We provide function 'r XBplot' to achieve this. We recommended to examine the distribution in log2 reads per kilobase per million (RPKM) unit by setting argument unit equals to "RPKM". Genelength information is loaded via "ExampleData". Ideally, library size should also be provided. By default, the sum of all the reads that mapped to exonic regions are used.
+It is always recommended that you examine the distribution of observed signal and background noise beforehand. We provide function 'r XBplot' to achieve this. We recommended to examine the distribution in log2 transcript per million (TPM) unit by setting argument unit equals to "logTPM". Genelength information is loaded via "ExampleData". Ideally, library size should also be provided. By default, the sum of all the reads that mapped to exonic regions are used.
 
 ```{r,tidy=TRUE,fig.width=5,fig.height=4}
-XBplot(XB, Samplenum = 1, unit = "LogRPKM", Genelength = genelength[,2])
+XBplot(XB, Samplenum = 1, unit = "LogTPM", Genelength = genelength[,2])
 ```
 
 Then estimate the preliminary underlying signal followed by normalizing factor and dispersion estimates 
@@ -85,7 +85,7 @@ plotSCVEsts(XB)
 Carry out the DE test by using function XBSeqTest
 
 ```{r}
-Teststas <- XBSeqTest( XB, levels(conditions)[1L], levels(conditions)[2L] )
+Teststas <- XBSeqTest( XB, levels(conditions)[1L], levels(conditions)[2L], method ='NP')
 ```
 
 Plot Maplot based on test statistics
@@ -97,10 +97,10 @@ MAplot(Teststas, padj = FALSE, pcuff = 0.01, lfccuff = 1)
 ```{r,eval=FALSE,tidy=TRUE}
 # Alternatively, all the codes above can be done with a wrapper function XBSeq
 Teststats <- XBSeq( Observed, Background, conditions, method='pooled', sharingMode='maximum',
-  fitType='local', pvals_only=FALSE )
+  fitType='local', pvals_only=FALSE, paraMethod = 'NP' )
 ```
 
-#### Compare the results with DESeq
+## Compare the results with DESeq
 
 Now we will carry out DE analysis on the same dataset by using DESeq and then compare the results obtained by these two methods
 
@@ -137,9 +137,9 @@ DE_plot + geom_point( data=Teststas[DE_index_inters,], aes(x=baseMean, y=log2Fol
 
 The red dots indicate DE genes identified only by XBSeq. Then green dots are the shared results of XBSeq and DESeq. The blue dots are DE genes identified only by DESeq. 
 
-## Details 
+# Details 
 
-#### Construction of gtf file for background region
+## Construction of gtf file for background region
 
 * Exonic region annotation is obtained from UCSC database. 
 
@@ -150,16 +150,28 @@ The red dots indicate DE genes identified only by XBSeq. Then green dots are the
 
 More details regarding how do we construct the background region annotation file of an real example can be found in manual page of ExampleData and also our publication of XBSeq.  
 
-## Bug reports
+## Regarding intron retention
+
+More often than not, I have been asked about whether intron retention events have any effect over the performance of XBSeq. Intron retention is a common mechanism for alternative splicing for controlling transcriptome activity. Several articles have already demonstrated that transcripts with intronic retention will be degraded via a mechanism called Nonsense-mediated mRNA decay (NMD) [1-3]. To me, intron retention will not affect the performance of XBSeq, since this type of transcripts will be degraded eventually and it makes sense to consider them as background noise. 
+
+
+# Bug reports
+
 Report bugs as issues on our [GitHub repository](https://github.com/Liuy12/XBSeq/issues) or you can report directly to my email: liuy12@uthscsa.edu.
 
-## Session information 
+# Session information 
+
 ```{r}
 sessionInfo()
 ```
 
-## Acknowledgements 
+# Acknowledgements 
+
 XBSeq is implemented in R based on the source code from DESeq and DESeq2. 
 
-## References
-H. I. Chen, Y. Liu, Y. Zou, Z. Lai, D. Sarkar, Y. Huang, et al., "Differential expression analysis of RNA sequencing data by incorporating non-exonic mapped reads," BMC Genomics, vol. 16 Suppl 7, p. S14, Jun 11 2015.
+# References
+
+[1] H. I. Chen, Y. Liu, Y. Zou, Z. Lai, D. Sarkar, Y. Huang, et al., "Differential expression analysis of RNA sequencing data by incorporating non-exonic mapped reads," BMC Genomics, vol. 16 Suppl 7, p. S14, Jun 11 2015.
+[2] Jung, Hyunchul, et al. "Intron retention is a widespread mechanism of tumor-suppressor inactivation." Nature genetics (2015).
+[3] Braunschweig, Ulrich, et al. "Widespread intron retention in mammals functionally tunes transcriptomes." Genome research 24.11 (2014): 1774-1786.
+[4] Lykke-Andersen, Søren, and Torben Heick Jensen. "Nonsense-mediated mRNA decay: an intricate machinery that shapes transcriptomes." Nature Reviews Molecular Cell Biology (2015).
