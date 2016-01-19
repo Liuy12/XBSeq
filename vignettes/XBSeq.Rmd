@@ -139,10 +139,8 @@ DE_index_XBSeq <- with(Teststas, which(pval<0.01 & abs(log2FoldChange)>1))
 DE_index_inters <- intersect(DE_index_DESeq, DE_index_XBSeq)
 DE_index_DESeq_uniq <- setdiff(DE_index_DESeq, DE_index_XBSeq)
 DE_plot <- MAplot(Teststas, padj = FALSE, pcuff = 0.01, lfccuff = 1, shape=16)
-DE_plot + geom_point( data=Teststas[DE_index_inters,], aes(x=baseMean, y=log2FoldChange),
-                      color= 'green', shape=16 ) + 
-  geom_point( data=Teststas[DE_index_DESeq_uniq,], aes( x=baseMean, y=log2FoldChange ),
-              color= 'blue', shape=16 )
+DE_plot + geom_point( data=Teststas[DE_index_inters,], aes(x=baseMean, y=log2FoldChange), color= 'green', shape=16 ) + 
+  geom_point( data=Teststas[DE_index_DESeq_uniq,], aes( x=baseMean, y=log2FoldChange ), color= 'blue', shape=16 )
 ```
 
 The red dots indicate DE genes identified only by XBSeq. Then green dots are the shared results of XBSeq and DESeq. The blue dots are DE genes identified only by DESeq. 
