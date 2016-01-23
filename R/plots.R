@@ -16,7 +16,7 @@ XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize =
     xlab <- 'Log2 TPM'
     if(is.null(Libsize)){
       warning("Libsize is not provided, the sum of all the read counts that mapped to exonic
-regions in each sample is used as the total library size for that sample")
+              regions in each sample is used as the total library size for that sample")
       Libsize <- sum(Observed$Sample)
     }
     if(is.null(Genelength))
@@ -51,7 +51,7 @@ regions in each sample is used as the total library size for that sample")
   else 
     dp <- c()
   return(list(gp, dp))
-}
+  }
 
 
 MAplot <- function(stats, ylim, padj=TRUE, pcuff=0.1, lfccuff=1, linecol='red3',
@@ -95,8 +95,8 @@ MAplot <- function(stats, ylim, padj=TRUE, pcuff=0.1, lfccuff=1, linecol='red3',
 }
 
 
-plotSCVEsts = function( XB, name=NULL, ymin, linecol='red3',
-                        xlab = "mean of normalized counts", ylab = "SCV")
+plotSCVEsts <- function( XB, name=NULL, ymin, linecol='red3',
+                         xlab = "mean of normalized counts", ylab = "SCV")
 {
   px = rowMeans(counts(XB, normalized=TRUE))
   sel = (px>0)
@@ -115,6 +115,6 @@ plotSCVEsts = function( XB, name=NULL, ymin, linecol='red3',
   fy = fitInfo(XB, name=name)$SCVFunc(fx)
   fitl = data.frame(fx=fx, fy=fy)
   ggplot() + geom_point( data=fitd, aes( x=px, y=py), shape=shape) +
-    geom_line( data=fitl, aes ( x=fx, y=fy), shape=shape, col=linecol, size=1.5, alpha=0.6) + scale_x_log10() +
+    geom_line( data=fitl, aes ( x=fx, y=fy), col=linecol, size=1.5, alpha=0.6) + scale_x_log10() +
     scale_y_log10() + labs(x=xlab, y=ylab)
 }
