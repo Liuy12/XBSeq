@@ -47,7 +47,10 @@
 - Add dynamic visulization to XBplot and MAplot
 - Comment regarding intron retention
 
+######################################################################
+################### 1.1.2
 
+- Delete dynamic visulization for speed concerns 
 
 
 

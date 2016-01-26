@@ -1,4 +1,4 @@
-XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize = NULL, Genelength = NULL, xlab = 'log2 TPM', ylab = 'Frequencies', col = c('blue', 'red'), alpha =c(1, 0.6), interactive = F){
+XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize = NULL, Genelength = NULL, xlab = 'log2 TPM', ylab = 'Frequencies', col = c('blue', 'red'), alpha =c(1, 0.6)){
   if(is.null(Samplenum))
     stop("You need to provide the column number of the sample you want to examine")
   Observed <- as.data.frame(counts(XB, slot = 1)) %>% select(Samplenum) %>% mutate(Group = 'Observed')
@@ -41,21 +41,12 @@ XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize =
     scale_fill_manual(values = col) + scale_alpha_manual(values = alpha, guide = FALSE) +
     guides(fill=guide_legend('')) +
     labs(x=xlab, y=ylab) + xlim(xlim)
-  if(interactive){
-    Background <- Combined[Combined$group == 'Background',1]
-    Promoter <- Combined[Combined$group == 'Observed', 1]
-    dp <- plot_ly(x = Background, opacity = 0.6, type = "histogram", histnorm = 'probability density', xbins = list(size = binwidth), autobinx = F, name = 'Background') %>%
-      add_trace(x = Promoter, filename="overlaid-histogram", name = 'Promoter') %>%
-      layout(barmode="overlay")
-  }
-  else 
-    dp <- c()
-  return(list(gp, dp))
+  return(gp)
   }
 
 
 MAplot <- function(stats, ylim, padj=TRUE, pcuff=0.1, lfccuff=1, linecol='red3',
-                   xlab='mean of normalized counts', ylab=expression(log[2]~fold~change), shape, interactive = F)
+                   xlab='mean of normalized counts', ylab=expression(log[2]~fold~change), shape)
 {
   if(!(is.data.frame(stats) && all(c("baseMean", "log2FoldChange") %in% colnames(stats))))
     stop("'stats' must be a data frame with columns named 'baseMean', 'log2FoldChange'.")
@@ -74,24 +65,7 @@ MAplot <- function(stats, ylim, padj=TRUE, pcuff=0.1, lfccuff=1, linecol='red3',
   gp <- ggplot() + geom_point( data=stats,aes( x=baseMean, y=log2FoldChange ), color=col, shape=shape ) +
     ylim(ylim) + geom_hline(yintercept=0,colour=linecol,size=1)  + scale_x_log10() +
     labs( x=xlab, y=ylab )
-  if(interactive){
-    stats$id <- rownames(stats)
-    mp <-
-      mjs_plot(stats, baseMean, log2FoldChange, decimals = 6) %>%
-      mjs_point(
-        color_accessor = col, color_range = c('red', 'grey32'), color_type = "category", x_rug =
-          TRUE, y_rug = TRUE
-      ) %>%
-      mjs_add_baseline(y_value = 0, label = 'baseline') %>%
-      mjs_labs(x_label = 'Log2 methylation levels', y_label = "Log2 fold change") %>%
-      mjs_add_mouseover("function(d) {
-                        $('{{ID}} svg .mg-active-datapoint')
-                        .text('Gene Name: ' +  d.point.id + ',' + ' Log2 intensity: ' + d.point.baseMean + ',' + ' Log2 fold change: ' + d.point.log2FoldChange);
-  }")
-  }
-  else
-    mp <- c()
-  return(list(gp, mp))
+  return(gp)
 }
 
 
