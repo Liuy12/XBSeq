@@ -32,12 +32,9 @@ import(
   "locfit",
   "ggplot2",
   "methods", 
-  "BiocGenerics", 
   "Biobase",
   "Delaporte",
-  "magrittr",
-  'plotly',
-  'metricsgraphics'
+  "magrittr"
 )
 
 importFrom("dplyr", "select")
