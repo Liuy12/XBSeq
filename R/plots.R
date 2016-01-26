@@ -1,4 +1,4 @@
-XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize = NULL, Genelength = NULL, xlab = 'log2 TPM', ylab = 'Frequencies', col = c('blue', 'red'), alpha =c(1, 0.6)){
+XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize = NULL, Genelength = NULL, xlab = 'log2 TPM', ylab = 'Frequencies', col = c('blue', 'red'), alpha =c(1, 0.6), interactive = F){
   if(is.null(Samplenum))
     stop("You need to provide the column number of the sample you want to examine")
   Observed <- as.data.frame(counts(XB, slot = 1)) %>% select(Samplenum) %>% mutate(Group = 'Observed')
@@ -46,7 +46,7 @@ XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize =
 
 
 MAplot <- function(stats, ylim, padj=TRUE, pcuff=0.1, lfccuff=1, linecol='red3',
-                   xlab='mean of normalized counts', ylab=expression(log[2]~fold~change), shape)
+                   xlab='mean of normalized counts', ylab=expression(log[2]~fold~change), shape, interactive = F)
 {
   if(!(is.data.frame(stats) && all(c("baseMean", "log2FoldChange") %in% colnames(stats))))
     stop("'stats' must be a data frame with columns named 'baseMean', 'log2FoldChange'.")
