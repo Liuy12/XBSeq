@@ -42,8 +42,7 @@ XBplot <- function(XB, Samplenum = NULL, unit = c('counts', 'LogTPM'), Libsize =
     guides(fill=guide_legend('')) +
     labs(x=xlab, y=ylab) + xlim(xlim)
   return(gp)
-  }
-
+}
 
 MAplot <- function(stats, ylim, padj=TRUE, pcuff=0.1, lfccuff=1, linecol='red3',
                    xlab='mean of normalized counts', ylab=expression(log[2]~fold~change), shape, interactive = F)
