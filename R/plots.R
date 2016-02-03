@@ -87,6 +87,6 @@ plotSCVEsts = function( XB, name=NULL, ymin, linecol='red3',
   fy = fitInfo(XB, name=name)$SCVFunc(fx)
   fitl = data.frame(fx=fx, fy=fy)
   ggplot() + geom_point( data=fitd, aes( x=px, y=py), shape=shape) +
-    geom_line( data=fitl, aes ( x=fx, y=fy), shape=shape, col=linecol, size=1.5, alpha=0.6) + scale_x_log10() +
+    geom_line( data=fitl, aes ( x=fx, y=fy), col=linecol, size=1.5, alpha=0.6) + scale_x_log10() +
     scale_y_log10() + labs(x=xlab, y=ylab)
 }

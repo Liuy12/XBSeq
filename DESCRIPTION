@@ -1,8 +1,8 @@
 Package: XBSeq
 Type: Package
 Title: Test for differential expression for RNA-seq data
-Version: 1.0.0
-Date: 2015-08-9
+Version: 1.0.1
+Date: 2016-02-02
 Author: Yuanhang Liu
 Maintainer: Yuanhang Liu <liuy12@uthscsa.edu>
 Description: We developed a novel algorithm, XBSeq, where a statistical model was established based on the assumption that observed signals are the convolution of true expression signals and sequencing noises. The mapped reads in non-exonic regions are considered as sequencing noises, which follows a Poisson distribution. Given measureable observed and noise signals from RNA-seq data, true expression signals, assuming governed by the negative binomial distribution, can be delineated and thus the accurate detection of differential expressed genes.
