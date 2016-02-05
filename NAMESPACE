@@ -31,8 +31,7 @@ import(
   "DESeq2",
   "locfit",
   "ggplot2",
-  "methods", 
-  "BiocGenerics", 
+  "methods",
   "Biobase",
   "Delaporte",
   "magrittr"
