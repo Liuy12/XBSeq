@@ -1,7 +1,7 @@
 Package: XBSeq
 Type: Package
 Title: Test for differential expression for RNA-seq data
-Version: 1.2.0
+Version: 1.2.1
 Date: 2016-02-05
 Author: Yuanhang Liu
 Maintainer: Yuanhang Liu <liuy12@uthscsa.edu>
