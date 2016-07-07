@@ -128,7 +128,7 @@ setMethod("estimateSCV", signature(object="XBSeqDataSet"),
           })
 
 
-XBSeqTest <- function(XB, condA, condB, pvals_only=FALSE, method = c('NP', 'MLE'))
+XBSeqTest <- function(XB, condA, condB, pvals_only=FALSE, method = c('NP', 'MLE'), big_count = 900)
 {
   stopifnot( is( XB, "XBSeqDataSet" ) )
   if( all( is.na( dispTable(XB) ) ) )
@@ -154,7 +154,8 @@ XBSeqTest <- function(XB, condA, condB, pvals_only=FALSE, method = c('NP', 'MLE'
     sizeFactors(XB)[colB],
     rawScvA,
     rawScvB, 
-    method = method)
+    method = method,
+    big_count = big_count)
   if( pvals_only )
     return(pval)
   else {
@@ -176,13 +177,13 @@ XBSeqTest <- function(XB, condA, condB, pvals_only=FALSE, method = c('NP', 'MLE'
 
 
 # a wrapper function once and for all
-XBSeq <- function(counts, bgcounts, conditions, method='pooled', sharingMode='maximum', fitType='local', pvals_only=FALSE, paraMethod='NP'){
+XBSeq <- function(counts, bgcounts, conditions, method='pooled', sharingMode='maximum', fitType='local', pvals_only=FALSE, paraMethod='NP', big_count = 900){
   if(!is.factor(conditions))
     conditions <- as.factor(conditions)
   XB <- XBSeqDataSet(counts, bgcounts, conditions)
   XB <- estimateRealCount(XB)
   XB <- estimateSizeFactors(XB)
   XB <- estimateSCV(XB, method=method, sharingMode=sharingMode, fitType=fitType)
-  Teststas <- XBSeqTest(XB, levels(conditions)[1L], levels(conditions)[2L], pvals_only=pvals_only, method = paraMethod)
+  Teststas <- XBSeqTest(XB, levels(conditions)[1L], levels(conditions)[2L], pvals_only=pvals_only, method = paraMethod, big_count = big_count)
   Teststas
 }
