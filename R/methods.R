@@ -234,8 +234,8 @@ XBSeqTestForMatrices <-
           dnbinom(ks, mu = signalmuA[!big][i], size = sizeA[!big][i]) *
           dnbinom(kAs[!big][i] + kBs[!big][i] - ks, mu = signalmuB[!big][i], size = sizeB[!big][i])
         
-        # probabilit
-        y of observed count sums:pobs <-
+        # probabilit y of observed count sums:
+        pobs <-
           dnbinom(kAs[!big][i], mu = signalmuA[!big][i], size = sizeA[!big][i]) *
           dnbinom(kBs[!big][i], mu = signalmuB[!big][i], size = sizeB[!big][i])
         

@@ -4,7 +4,7 @@ author: "Yuanhang Liu"
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Differential expression analysis of count data using XBSeq package}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{rmarkdown}
   %\VignetteEncoding{UTF-8} 
 output: 
   BiocStyle::html_document:
