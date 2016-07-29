@@ -7,7 +7,7 @@
    The same method is adopted from DESeq for testing differential expression 
 }
 \usage{
-XBSeqTest(XB, condA, condB, pvals_only = FALSE, method = c("NP", "MLE"))
+XBSeqTest(XB, condA, condB, pvals_only = FALSE, method = c("NP", "MLE"), big_count = 900)
 }
 \arguments{
   \item{XB}{
@@ -24,6 +24,9 @@ XBSeqTest(XB, condA, condB, pvals_only = FALSE, method = c("NP", "MLE"))
 }
   \item{method}{
    method to use for estimation of distribution parameters, 'NP' or 'MLE'. See details section for details
+}
+  \item{big_count}{
+   An integer specify a count number above which where be considerred as 'big' and beta approximation will be used instead for testing differential expression
 }
 }
 \details{

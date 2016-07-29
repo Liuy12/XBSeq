@@ -51,3 +51,11 @@
 
 - Delete dynamic visulization for speed concerns
 
+######################################################################
+################### 1.2.3
+
+- Incorporating funcitonality of differential usage testing from roar
+- Add beta approximation for testing differential expression
+
+
+
