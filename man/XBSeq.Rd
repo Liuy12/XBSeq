@@ -8,7 +8,7 @@
 }
 \usage{
 XBSeq(counts, bgcounts, conditions, method = "pooled", 
-   sharingMode = "maximum", fitType = "local", pvals_only = FALSE, paraMethod='NP')
+   sharingMode = "maximum", fitType = "local", pvals_only = FALSE, paraMethod='NP', big_count = 900)
 }
 \arguments{
   \item{counts}{
@@ -34,6 +34,9 @@ XBSeq(counts, bgcounts, conditions, method = "pooled",
 }
   \item{paraMethod}{
    Method to use for estimation of distribution parameters, 'NP' or 'MLE'. See details section for details 
+}
+  \item{big_count}{
+   An integer specify a count number above which where be considerred as 'big' and beta approximation will be used instead for testing differential expression
 }
 }
 \details{
