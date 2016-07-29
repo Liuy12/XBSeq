@@ -1,13 +1,23 @@
-[![platform](http://www.bioconductor.org/shields/availability/devel/XBSeq.svg)](http://www.bioconductor.org/packages/devel/bioc/html/XBSeq.html#archives)
-[![Build Status](http://www.bioconductor.org/shields/build/devel/bioc/XBSeq.svg)](http://bioconductor.org/checkResults/devel/bioc-LATEST/XBSeq/)
-[![Bioc](http://www.bioconductor.org/shields/years-in-bioc/XBSeq.svg)](http://www.bioconductor.org/packages/devel/bioc/html/XBSeq.html#since)
-[![post](http://www.bioconductor.org/shields/posts/XBSeq.svg)](https://support.bioconductor.org/t/XBSeq/)
-[![commit](http://www.bioconductor.org/shields/commits/bioc/XBSeq.svg)](http://www.bioconductor.org/packages/devel/bioc/html/XBSeq.html#svn_source)
-[![download](http://www.bioconductor.org/shields/downloads/XBSeq.svg)](http://bioconductor.org/packages/stats/bioc/XBSeq.html)
+---
+title: "Differential expression and apa usage analysis of count data using XBSeq package"
+author: "Yuanhang Liu"
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{Differential expression and apa usage analysis of count data using XBSeq package}
+  %\VignetteEngine{rmarkdown}
+  %\VignetteEncoding{UTF-8} 
+output: 
+  BiocStyle::html_document:
+    toc: true
+---
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
 
 # Introduction 
 
-XBSeq is a novel algorithm for testing RNA-seq differential expression (DE), where a statistical model was established based on the assumption that observed signals are the convolution of true expression signals and sequencing noises. The mapped reads in non-exonic regions are considered as sequencing noises, which follows a Poisson distribution. Given measurable observed signal and background noise from RNA-seq data, true expression signals, assuming governed by the negative binomial distribution, can be delineated and thus the accurate detection of differential expressed genes. XBSeq paper is published in BMC genomics [1].
+XBSeq is a novel algorithm for testing RNA-seq differential expression (DE), where a statistical model was established based on the assumption that observed signals are the convolution of true expression signals and sequencing noises. The mapped reads in non-exonic regions are considered as sequencing noises, which follows a Poisson distribution. Given measurable observed signal and background noise from RNA-seq data, true expression signals, assuming governed by the negative binomial distribution, can be delineated and thus the accurate detection of differential expressed genes. XBSeq paper is published in BMC genomics [1]. We recently also incorporated functionality of roar package for testing differential alternative polyadenylation (apa) usage.  
 
 # Installation 
 
@@ -19,13 +29,30 @@ biocLite("XBSeq")
 ```{r,message = FALSE, warning=FALSE}
 library("XBSeq")
 ```
-If you would like to install the development version of XBSeq, it is recommended that you refer to the github page of XBSeq. 
+You can also install development version of XBSeq by
+```{r,eval=FALSE}
+library(devtools)
+install_github('liuy12/XBSeq')
+```
 
 # Use XBSeq for testing differential expression 
 
+In order to use XBSeq for testing DE, after sequence alignment, we need to carry out read-counting procedure twice to measure the reads mapped to exonic regions (observed signal) and non-exonic regions (background noise). There are several existing methods for this purpose. Here we introduce read counting using featureCounts, HTSeq and summarizeOverlaps
+
+## featureCounts 
+
+featureCounts is a read summarization program that can be used for reads generated from RNA or DNA sequencing technologies and it implements highly efficient chromosome hashing and feature blocking techniques which is considerably fast in speed and require less computer memory. featureCounts is available from Rsubread package within R. Basically, you will need to run the following commands: 
+
+```{r,eval=FALSE}
+fc_signal <- featureCounts(files = bamLists, annot.ext = gtf_file, isGTFAnnotationFile = TRUE)
+fc_bg <- featureCounts(files = bamLists, annot.ext = gtf_file_bg, isGTFAnnotationFile = TRUE)
+```
+
+The gtf file used to measure observed signal and background noise can be downloaded in the gtf folder from github: https://github.com/Liuy12/XBSeq_files. We have already constructed annotations for several organism of various genome builds. If you would like to construct the gtf file by yourself, we also have deposited the perl script we used to construct the gtf file in github. Details regarding the procedure we used to construct the background gtf file can be found in the Details section in the vignette.
+
 ## HTSeq procedure
 
-In order to use XBSeq for testing DE, after sequence alignment, we need to run HTSeq twice to measure the reads mapped to exonic regions (observed signal) and non-exonic regions (background noise). Generally speaking, you will need to run the following code to generate observed signal and background noise. 
+Alternatively, you can also use HTSeq for read-counting purpose:
 
 ```{r,engine='python',eval=FALSE}
 htseq-count [options] <alignment_file> <gtf_file> > Observed_count.txt
@@ -34,7 +61,30 @@ htseq-count [options] <alignment_file> <gtf_file_bg> > background_count.txt
 
 Details regarding how HTSeq works can be found here: http://www-huber.embl.de/HTSeq/doc/count.html
 
-The gtf file used to measure observed signal can be downloaded from UCSC database: http://genome.ucsc.edu. The gtf file used to measure background noise can be downloaded in the gtf folder from github: https://github.com/Liuy12/XBSeq_files. If you would like to construct the gtf file by yourself, we also have deposited the perl script we used to construct the gtf file in github. Details regarding the procedure we used to construct the background gtf file can be found in the Details section in the vignette.
+## summarizeOverlaps
+
+You can also use `summarizeOverlaps` function which is available from GenomicRanges package:
+
+```{r,eval=FALSE}
+features_signal <- import(gtf_file)
+features_signal <- split(features_signal, mcols(features_signal)$gene_id)
+so_signal <- summarizeOverlaps(features_signal, bamLists)
+
+## for background noise
+features_bg <- import(gtf_file_bg)
+features_bg <- split(features_bg, mcols(features_bg)$gene_id)
+so_bg <- summarizeOverlaps(features_bg, bamLists)
+```
+
+## Testing differential APA usage 
+
+Alternative polyadenylation (APA) is a widespread mechanism, where alternative poly(A) sites are used by a gene to encode multiple mRNA transcripts of different 3’UTR lengths. User can infer differential APA usage directly form RNA-seq alignment files:
+
+```{r,eval=FALSE}
+apaStats <- apaUsage(bamTreatment, bamControl, apaAnno)
+```
+
+Where `bamTreatment` is a list of full path of filenames of bam alignments with data for the treatment condition and `bamControl` is a list of full path of filenames of bam alignments with data for the control condition to be considered. `apaAnno` is full path of apa annotation used by roar package. APA annotation for several organisms of various genome build can be downloaded from [here](https://github.com/Liuy12/XBSeq_files). For details regarding how to construct APA annotation, please refer to Details section is the vignette. 
 
 ## XBSeq testing for DE 
 
@@ -129,10 +179,8 @@ DE_index_XBSeq <- with(Teststas, which(pval<0.01 & abs(log2FoldChange)>1))
 DE_index_inters <- intersect(DE_index_DESeq, DE_index_XBSeq)
 DE_index_DESeq_uniq <- setdiff(DE_index_DESeq, DE_index_XBSeq)
 DE_plot <- MAplot(Teststas, padj = FALSE, pcuff = 0.01, lfccuff = 1, shape=16)
-DE_plot + geom_point( data=Teststas[DE_index_inters,], aes(x=baseMean, y=log2FoldChange),
-                      color= 'green', shape=16 ) + 
-  geom_point( data=Teststas[DE_index_DESeq_uniq,], aes( x=baseMean, y=log2FoldChange ),
-              color= 'blue', shape=16 )
+DE_plot + geom_point( data=Teststas[DE_index_inters,], aes(x=baseMean, y=log2FoldChange), color= 'green', shape=16 ) + 
+  geom_point( data=Teststas[DE_index_DESeq_uniq,], aes( x=baseMean, y=log2FoldChange ), color= 'blue', shape=16 )
 ```
 
 The red dots indicate DE genes identified only by XBSeq. Then green dots are the shared results of XBSeq and DESeq. The blue dots are DE genes identified only by DESeq. 
@@ -150,9 +198,13 @@ The red dots indicate DE genes identified only by XBSeq. Then green dots are the
 
 More details regarding how do we construct the background region annotation file of an real example can be found in manual page of ExampleData and also our publication of XBSeq.  
 
+## Construction of gtf file for APA annotation used by roar package
+
+APA sites are predicted by using POLYAR program [2], which applies an Expectation Maximization (EM) approach by using 12 different previously mapped poly(A) signal (PAS) hexamer. The predicted APA sites by POLYAR are classified into three classes, PAS-strong, PAS-medium and PAS-weak. Only APA sites in PAS-strong class are selected to construct final APA annotation. APA annotations for human and mouse genome of different versions have been built and are available to download from github: https://github.com/Liuy12/XBSeq_files 
+
 ## Regarding intron retention
 
-More often than not, I have been asked about whether intron retention events have any effect over the performance of XBSeq. Intron retention is a common mechanism for alternative splicing for controlling transcriptome activity. Several articles have already demonstrated that transcripts with intronic retention will be degraded via a mechanism called Nonsense-mediated mRNA decay (NMD) [1-3]. To me, intron retention will not affect the performance of XBSeq, since this type of transcripts will be degraded eventually and it makes sense to consider them as background noise. 
+More often than not, I have been asked about whether intron retention events have any effect over the performance of XBSeq. Intron retention is a common mechanism for alternative splicing for controlling transcriptome activity. Several articles have already demonstrated that transcripts with intronic retention will be degraded via a mechanism called Nonsense-mediated mRNA decay (NMD) [3-5]. To me, intron retention will not affect the performance of XBSeq, since this type of transcripts will be degraded eventually and it makes sense to consider them as background noise. 
 
 
 # Bug reports
@@ -172,6 +224,7 @@ XBSeq is implemented in R based on the source code from DESeq and DESeq2.
 # References
 
 [1] H. I. Chen, Y. Liu, Y. Zou, Z. Lai, D. Sarkar, Y. Huang, et al., "Differential expression analysis of RNA sequencing data by incorporating non-exonic mapped reads," BMC Genomics, vol. 16 Suppl 7, p. S14, Jun 11 2015.
-[2] Jung, Hyunchul, et al. "Intron retention is a widespread mechanism of tumor-suppressor inactivation." Nature genetics (2015).
-[3] Braunschweig, Ulrich, et al. "Widespread intron retention in mammals functionally tunes transcriptomes." Genome research 24.11 (2014): 1774-1786.
-[4] Lykke-Andersen, Søren, and Torben Heick Jensen. "Nonsense-mediated mRNA decay: an intricate machinery that shapes transcriptomes." Nature Reviews Molecular Cell Biology (2015).
+[2] Akhtar MN, Bukhari SA, Fazal Z, Qamar R, Shahmuradov IA: POLYAR, a new computer program for prediction of poly(A) sites in human sequences. BMC genomics 2010, 11:646.
+[3] Jung, Hyunchul, et al. "Intron retention is a widespread mechanism of tumor-suppressor inactivation." Nature genetics (2015).
+[4] Braunschweig, Ulrich, et al. "Widespread intron retention in mammals functionally tunes transcriptomes." Genome research 24.11 (2014): 1774-1786.
+[5] Lykke-Andersen, Søren, and Torben Heick Jensen. "Nonsense-mediated mRNA decay: an intricate machinery that shapes transcriptomes." Nature Reviews Molecular Cell Biology (2015).
