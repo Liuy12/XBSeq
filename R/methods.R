@@ -290,10 +290,15 @@ exactTestBetaApprox <- function(y1,y2,size1, size2)
 
 
 insertRow <- function(existingDF, newrow, r) {
-  for (i in 1:length(r))
-    existingDF[seq(r[i] + 1,nrow(existingDF) + 1),] <-
-      existingDF[seq(r[i],nrow(existingDF)),]
-  existingDF[r[i],] <- newrow[i]
+  existingDF <- as.data.frame(existingDF)
+  for (i in 1:length(r)){
+    if(r[i] < nrow(existingDF) | r[i] == nrow(existingDF))
+      existingDF[seq(r[i] + 1,nrow(existingDF) + 1),] <-
+        existingDF[seq(r[i],nrow(existingDF)),]
+    existingDF[r[i],] <- newrow[i,]
+  }
+  existingDF <- as.matrix(existingDF)
+  storage.mode(existingDF) <- 'integer'
   existingDF
 }
 

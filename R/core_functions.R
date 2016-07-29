@@ -175,6 +175,17 @@ XBSeqTest <- function(XB, condA, condB, pvals_only=FALSE, method = c('NP', 'MLE'
     }
 }
 
+apaUsage <- function(bamTreatment, bamControl, apaAnno, paired = NULL){
+  rds <- RoarDatasetFromFiles(bamTreatment, bamControl, apaAnno)
+  rds <- countPrePost(rds, FALSE)
+  rds <- computeRoars(rds)
+  if(is.null(paired))
+    rds <- computePvals(rds)
+  else 
+    rds <- computePairedPvals(rds, paired)
+  results <- fpkmResults(rds)
+  return(results)
+}
 
 # a wrapper function once and for all
 XBSeq <- function(counts, bgcounts, conditions, method='pooled', sharingMode='maximum', fitType='local', pvals_only=FALSE, paraMethod='NP', big_count = 900){

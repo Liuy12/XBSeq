@@ -34,7 +34,8 @@ import(
   "methods", 
   "Biobase",
   "Delaporte",
-  "magrittr"
+  "magrittr",
+  "roar"
 )
 
 importFrom("dplyr", "select")
