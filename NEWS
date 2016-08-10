@@ -57,5 +57,10 @@
 - Incorporating funcitonality of differential usage testing from roar
 - Add beta approximation for testing differential expression
 
+######################################################################
+################### 1.2.4
+
+- fix .Rd bug
+- finish updating XBSeq2
 
 
