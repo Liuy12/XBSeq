@@ -159,7 +159,7 @@ XBSeqTestForMatrices <-
       sizeA <- signalmuA ^ 2 / (signalVarsA - signalmuA)
       sizeB <- signalmuB ^ 2 / (signalVarsB - signalmuB)
     }
-    else{
+    else if(method == 'MLE'){
       musA <- mus * mean(sizeFactorsA)
       musB <- mus * mean(sizeFactorsB)
       
@@ -177,42 +177,81 @@ XBSeqTestForMatrices <-
       lambda <- rowMeans(cbind(t(t(bgcountsA) / sizeFactorsA),
                                t(t(bgcountsB) / sizeFactorsB)))
       
-      lambdaA <- lambda * mean(sizeFactorsA)
-      lambdaB <- lambda * mean(sizeFactorsB)
+      ParamsA <- c()
+      cat('estimating parameters using MLE for group one', '\n')
+      for(i in 1:nrow(countsA)){
+        temp <- estimation_param_PoissonNB_MLE_NB(
+          countsA[i,],
+          musA[i] ^2 / (VarsA[i] - musA[i]),
+          musA[i]
+        )
+        ParamsA <- rbind(ParamsA, as.data.frame(temp))
+      }
+      cat('estimating parameters using MLE for group two', '\n')
+      ParamsB <- c()
+      for(i in 1:nrow(countsB)){
+        temp <- estimation_param_PoissonNB_MLE_NB(
+          countsB[i,],
+          musB[i] ^2 / (VarsB[i] - musB[i]),
+          musB[i]
+        )
+        ParamsB <- rbind(ParamsB, as.data.frame(temp))
+      }
+      # ParamsA <-
+      #   sapply(1:nrow(countsA), function(i)
+      #     estimation_param_PoissonNB_MLE(
+      #       countsA[i,] + bgcountsA[i,],
+      #       bgcountsA[i,],
+      #       musA[i] ^
+      #         2 / (VarsA[i] - musA[i]),
+      #       (VarsA[i] -
+      #          musA[i]) / musA[i],
+      #       lambdaA[i]
+      #     ))
+      # ParamsA <- matrix(unlist(ParamsA), ncol = 3, byrow = TRUE)
+      # ParamsB <-
+      #   sapply(1:nrow(countsB), function(i)
+      #     estimation_param_PoissonNB_MLE(
+      #       countsB[i,] + bgcountsB[i,],
+      #       bgcountsB[i,],
+      #       musB[i] ^
+      #         2 / (VarsB[i] - musB[i]),
+      #       (VarsB[i] -
+      #          musB[i]) / musB[i],
+      #       lambdaB[i]
+      #     ))
+      # ParamsB <- matrix(unlist(ParamsB), ncol = 3, byrow = TRUE)
       
+      # sizeA <- ParamsA[,1] * sum(sizeFactorsA)
+      # sizeB <- ParamsB[,1] * sum(sizeFactorsB)
+      # 
       
-      ParamsA <-
-        sapply(1:nrow(countsA), function(i)
-          estimation_param_PoissonNB_MLE(
-            countsA[i,] + bgcounts[i,],
-            bgcountsA[i,],
-            musA[i] ^
-              2 / (VarsA[i] - musA[i]),
-            (VarsA[i] -
-               musA[i]) / musA[i],
-            lambdaA[i]
-          ))
-      ParamsA <- matrix(unlist(ParamsA), ncol = 3, byrow = TRUE)
-      ParamsB <-
-        sapply(1:nrow(countsB), function(i)
-          estimation_param_PoissonNB_MLE(
-            countsB[i,] + bgcounts[i,],
-            bgcountsB[i,],
-            musB[i] ^
-              2 / (VarsB[i] - musB[i]),
-            (VarsB[i] -
-               musB[i]) / musB[i],
-            lambdaB[i]
-          ))
-      ParamsB <- matrix(unlist(ParamsB), ncol = 3, byrow = TRUE)
+      signalmuA <- mus * sum(sizeFactorsA)
+      signalmuB <- mus * sum(sizeFactorsB)
       
-      sizeA <- ParamsA[,1] * sum(sizeFactorsA)
-      sizeB <- ParamsB[,1] * sum(sizeFactorsB)
+      signalVarsA <-
+        pmax(
+          mus * sum(sizeFactorsA) + SCVA * mus ^ 2 * sum(sizeFactorsA ^ 2),
+          mus * sum(sizeFactorsA) * (1 + 1e-8)
+        )
+      signalVarsB <-
+        pmax(
+          mus * sum(sizeFactorsB) + SCVB * mus ^ 2 * sum(sizeFactorsB ^ 2),
+          mus * sum(sizeFactorsB) * (1 + 1e-8)
+        )
       
-      signalmuA <- ParamsA[,1] * ParamsB[,2] * sum(sizeFactorsA)
-      signalmuB <- ParamsB[,1] * ParamsB[,2] * sum(sizeFactorsB)
+      sizeA <- signalmuA ^ 2 / (signalVarsA - signalmuA)
+      sizeB <- signalmuB ^ 2 / (signalVarsB - signalmuB)
+      
+      # sizeA <- musA ^2 / (VarsA - musA) * sum(sizeFactorsA)
+      # sizeB <- musB ^2 / (VarsB - musB) * sum(sizeFactorsB)
+
+      signalmuA <- ParamsA[,2] * sum(sizeFactorsA)
+      signalmuB <- ParamsB[,2] * sum(sizeFactorsB)
+      #signalmuA <- ParamsA[,1] * ParamsA[,2] * sum(sizeFactorsA)
+      #signalmuB <- ParamsB[,1] * ParamsB[,2] * sum(sizeFactorsB)
     }
-    
+
     pvals <- rep(1,nrow(countsA))
     names(pvals) <- rownames(countsA)
     
@@ -381,7 +420,6 @@ Loglikhood <- function(counts, bgcounts) {
   }
 }
 
-
 estimation_param_PoissonNB_MLE <-
   function(counts, bgcounts, alpha, beta, lambda) {
     if (any(is.na(c(alpha, beta, lambda))))
@@ -404,6 +442,46 @@ estimation_param_PoissonNB_MLE <-
         else
           list(
             alpha = mle$par[1], beta = mle$par[2], lambda = mle$par[3]
+          )
+      }
+    }
+  }
+
+Loglikhood_NB <- function(counts) {
+  function(para) {
+    size <- para[1]
+    mu <- para[2]
+    - sum(
+      dnbinom(
+        counts, size = size, mu = mu, log = TRUE
+      )
+    )
+  }
+}
+
+
+estimation_param_PoissonNB_MLE_NB <-
+  function(counts, size, mu) {
+    if (any(is.na(c(size, mu))))
+      list(size = size, mu = mu)
+    else{
+      mle <-
+        try(optim(
+          c(size, mu), Loglikhood_NB(counts),
+          method = 'L-BFGS-B', lower = c(0,0,0)
+        ), silent = TRUE)
+      if (class(mle) == 'try-error')
+        list(size = size, mu = mu)
+      else{
+        mle <- optim(
+          c(size, mu), Loglikhood_NB(counts),
+          method = 'L-BFGS-B', lower = c(0,0,0)
+        )
+        if (mle$convergence > 0 | any(is.na(mle$par)))
+          list(size = size, mu = mu)
+        else
+          list(
+            size = mle$par[1], mu = mle$par[2]
           )
       }
     }
