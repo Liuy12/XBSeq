@@ -33,7 +33,6 @@ import(
   "ggplot2",
   "methods", 
   "Biobase",
-  "Delaporte",
   "magrittr",
   "roar"
 )

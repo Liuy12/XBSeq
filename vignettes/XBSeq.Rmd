@@ -206,6 +206,17 @@ APA sites are predicted by using POLYAR program [2], which applies an Expectatio
 
 More often than not, I have been asked about whether intron retention events have any effect over the performance of XBSeq. Intron retention is a common mechanism for alternative splicing for controlling transcriptome activity. Several articles have already demonstrated that transcripts with intronic retention will be degraded via a mechanism called Nonsense-mediated mRNA decay (NMD) [3-5]. To me, intron retention will not affect the performance of XBSeq, since this type of transcripts will be degraded eventually and it makes sense to consider them as background noise. 
 
+# Latest updates of XBSeq: XBSeq2
+
+* Updated background annotation file using latest annotation file from UCSC database
+
+* Incorprated functionality to directly process alignment files (.bam files) using featureCounts
+
+* Provided one alternative parameter estimation by using Maximum likelihood estimation (MLE)
+
+* Provided one alternative statistical test for differential expression by using beta distribution approximation
+
+* Incorporation of roar for testing differential APA usage
 
 # Bug reports
 
@@ -223,8 +234,8 @@ XBSeq is implemented in R based on the source code from DESeq and DESeq2.
 
 # References
 
-[1] H. I. Chen, Y. Liu, Y. Zou, Z. Lai, D. Sarkar, Y. Huang, et al., "Differential expression analysis of RNA sequencing data by incorporating non-exonic mapped reads," BMC Genomics, vol. 16 Suppl 7, p. S14, Jun 11 2015.
-[2] Akhtar MN, Bukhari SA, Fazal Z, Qamar R, Shahmuradov IA: POLYAR, a new computer program for prediction of poly(A) sites in human sequences. BMC genomics 2010, 11:646.
-[3] Jung, Hyunchul, et al. "Intron retention is a widespread mechanism of tumor-suppressor inactivation." Nature genetics (2015).
-[4] Braunschweig, Ulrich, et al. "Widespread intron retention in mammals functionally tunes transcriptomes." Genome research 24.11 (2014): 1774-1786.
-[5] Lykke-Andersen, Søren, and Torben Heick Jensen. "Nonsense-mediated mRNA decay: an intricate machinery that shapes transcriptomes." Nature Reviews Molecular Cell Biology (2015).
+1. H. I. Chen, Y. Liu, Y. Zou, Z. Lai, D. Sarkar, Y. Huang, et al., "Differential expression analysis of RNA sequencing data by incorporating non-exonic mapped reads," BMC Genomics, vol. 16 Suppl 7, p. S14, Jun 11 2015.
+2. Akhtar MN, Bukhari SA, Fazal Z, Qamar R, Shahmuradov IA: POLYAR, a new computer program for prediction of poly(A) sites in human sequences. BMC genomics 2010, 11:646.
+3. Jung, Hyunchul, et al. "Intron retention is a widespread mechanism of tumor-suppressor inactivation." Nature genetics (2015).
+4. Braunschweig, Ulrich, et al. "Widespread intron retention in mammals functionally tunes transcriptomes." Genome research 24.11 (2014): 1774-1786.
+5. Lykke-Andersen, Søren, and Torben Heick Jensen. "Nonsense-mediated mRNA decay: an intricate machinery that shapes transcriptomes." Nature Reviews Molecular Cell Biology (2015).
