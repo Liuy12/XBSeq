@@ -1,7 +1,7 @@
 Package: XBSeq
 Type: Package
 Title: Test for differential expression for RNA-seq data
-Version: 1.9.0
+Version: 1.9.1
 Date: 2017-07-21
 Author: Yuanhang Liu
 Maintainer: Yuanhang Liu <liuy12@uthscsa.edu>
@@ -15,3 +15,4 @@ VignetteBuilder: knitr
 biocViews: RNASeq, DifferentialExpression, Sequencing, Software,
         ExperimentalDesign
 URL: https://github.com/Liuy12/XBSeq
+PackageStatus: Deprecated
