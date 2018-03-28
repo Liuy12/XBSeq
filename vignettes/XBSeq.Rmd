@@ -54,7 +54,11 @@ The gtf file used to measure observed signal and background noise can be downloa
 
 Alternatively, you can also use HTSeq for read-counting purpose:
 
+<<<<<<< HEAD
 ```{r,engine='python',eval=FALSE, python.reticulate = FALSE}
+=======
+```{r,engine='python',eval=FALSE}
+>>>>>>> upstream/master
 htseq-count [options] <alignment_file> <gtf_file> > Observed_count.txt
 htseq-count [options] <alignment_file> <gtf_file_bg> > background_count.txt
 ```
